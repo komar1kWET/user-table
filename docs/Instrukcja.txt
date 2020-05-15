@@ -1,0 +1,10 @@
+Wymagania
+.Net Core 3.0
+
+Projekt uruchamia sie wpisujac komende:
+> dotnet watch run
+w folderze server-app
+
+aplikacja staje sie dostepna lokanie pod adresem https://localhost:5001/
+
+API dostepne jest podczas dzialania aplikacji (instruckja jak powyzej) pod linkiem  https://localhost:5001/swagger/index.html

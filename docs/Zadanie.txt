@@ -1,0 +1,24 @@
+1. Lista uzytkownikow taka jak widoczna na zrzucie users-list.jpg
+	Dane sa dostepne w serwisie GET /api/users oraz GET /api/accounts (joinuja sie po user.Id == account.OwnerId)
+	Zalezy mi na stylu dokladnie takim jak na zalaczonym obrazku, z wykorzystaniem boostrapa (nie pixel perfect, ale pogrubienia, styl przycisku, wyrownanie, kolorowanie i formatowanie kwoty)
+	Piersza kolumna to liczba porzadkowa.
+	Format kwoty: wyrownany do prawej, przecinek jako decimal separator, spacja jako group separator niezaleznie od ustawien (lokalizacji) systemowych/przegladarki
+	>=0 zielone
+	<0 czerwone
+	Lista powinna byc posortowana dwukryteriowo: najpier aktywnosc (od gory aktywni), pozniej alfabetycznie po username.
+
+2. Przycisk [Add] powinien pokazac okienko modalne z biblioteki Angular Material, styl mniej wiecej jak pogladowego okna z add-user.jpg
+	Pola do uzupelnienia
+	 - Is Active: checkbox, domyslnie zaznaczony
+	 - username: obowiazkowe, conajmniej 2 znaki dlugosci, maksymalnie 20
+	 - Title: ComboBox z wartosciami Mr. Ms. Mrs. Miss - obowiazkowe
+	 - FirstName: obowiazkowe
+	 - LastName: obowiazkowe
+	 - Email: obowiazkowe, format prawidlowgo emaila
+	 - Birthday: opcjonalne, wybierane z DatePickera
+
+	Przycisk save mozliwy do klikniecia tylko gdy formularz jest valid.
+	Zapis nowego uzytkownika wykonuje sie wolajac endpoint POST /api/users
+	Po zapisaniu okienko sie zamyka, a nowo dodany uzytkownik pojawia sie na liscie, z Id nadanym przez serwis podczas zapisu (do zapisu nalezy wyslac Id = 0).
+
+3. Na formularzu z pt 2 nalezy dodac walidacje pola username. Nalezy sprawdzic unikalnosc wysylajac zapytanie do serwera GET /api/users/{username}/uniqueness

@@ -1,0 +1,4 @@
+server-app/bin/
+server-app/obj/
+packages/
+.vs/

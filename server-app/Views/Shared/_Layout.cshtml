@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FrontDev2</title>
+    <environment names="Development">
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" asp-href-include="~/styles*.css" />
+    </environment>
+</head>
+<body>
+    @RenderBody()
+    <environment names="Development">
+        <script src="runtime.js"></script>
+        <script src="polyfills.js"></script>
+        <script src="styles.js"></script>
+        <script src="vendor.js"></script>
+        <script src="main.js"></script>
+    </environment>
+    <environment names="Production,Staging">
+        <script asp-src-include="~/runtime-es2015*.js" type="module"></script>
+        <script asp-src-include="~/runtime-es5*.js" nomodule defer></script>
+        <script asp-src-include="~/polyfills-es2015*.js" type="module"></script>
+        <script asp-src-include="~/polyfills-es5*.js" nomodule defer></script>
+        <script asp-src-include="~/scripts*.js" defer></script>
+        <script asp-src-include="~/main-es2015*.js" type="module"></script>
+        <script asp-src-include="~/main-es5*.js" nomodule defer></script>
+    </environment>
+</body>
+</html>
