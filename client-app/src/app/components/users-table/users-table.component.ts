@@ -4,6 +4,7 @@ import {UserService} from "@fd2/services/user.service";
 import {AccountModel} from "@fd2/models/account.model";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserWindowComponent} from "@fd2/components/add-user-window/add-user-window.component";
+import {forkJoin} from "rxjs";
 
 @Component({
   selector: 'fd2-users-table',
@@ -23,12 +24,11 @@ export class UsersTableComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userService.getUsers().subscribe((users: UserModel[]) => {
-      this.usersList = users;
-    });
-    this.userService.getUsersBalance().subscribe((accounts: AccountModel[]) => {
-      this.applyBalanceToAccordingUser(this.usersList, accounts);
-    });
+    forkJoin([this.userService.getUsers(), this.userService.getUsersBalance()])
+      .subscribe((userInfo: [UserModel[], AccountModel[]]) => {
+        this.usersList = userInfo[0];
+        this.applyBalanceToAccordingUser(this.usersList, userInfo[1]);
+      })
     this.userService.getUsersEmitter()
       .subscribe((usersData: [UserModel[], AccountModel[]]) => {
         this.usersList = usersData[0];
