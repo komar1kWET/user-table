@@ -3,10 +3,6 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {MatDialogRef} from "@angular/material/dialog";
 import {UserService} from "@fd2/services/user.service";
 import {usernameUniquenessValidator,} from "@fd2/validators/username-validator";
-import {UserModel} from "@fd2/models/user.model";
-import {from} from "rxjs";
-import {combineAll, map, switchMap} from "rxjs/operators";
-import {AccountModel} from "@fd2/models/account.model";
 
 @Component({
   selector: 'fd2-add-user-window',
