@@ -1,0 +1,51 @@
+<button type="button"
+        class="btn btn-success float-right add-btn"
+        data-toggle="modal"
+        data-target="#staticBackdrop"
+        (click)="openDialog()">
+  <i class="fas fa-plus"></i> Add
+</button>
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">
+      Active
+      <i class="fas fa-sort-amount-up"
+        *ngIf="sortActiveUp"
+        (click)="sort(isActiveProperty)"></i>
+      <i class="fas fa-sort-amount-down"
+        *ngIf="!sortActiveUp"
+        (click)="sort(isActiveProperty)"></i>
+    </th>
+    <th scope="col">
+      Username
+      <i class="fas fa-sort-alpha-up"
+         *ngIf="sortUsernameUp"
+         (click)="sort(usernameProperty)"></i>
+      <i class="fas fa-sort-alpha-down"
+         *ngIf="!sortUsernameUp"
+         (click)="sort(usernameProperty)"></i>
+    </th>
+    <th scope="col">Email</th>
+    <th scope="col">Name</th>
+    <th scope="col">Age</th>
+    <th scope="col" class="text-right">Account balance</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of usersList">
+    <th scope="row">{{usersList.indexOf(user) + 1}}</th>
+    <td><i class="fas fa-check" *ngIf="user.isActive"></i></td>
+    <td class="username">{{user.username}}</td>
+    <td>{{user.email}}</td>
+    <td>{{user.title}} {{user.firstName}} {{user.lastName}}</td>
+    <td>{{user.birthday | yearsOld}}</td>
+    <td class="text-right" [ngClass]="user.account?.balance < 0 ? 'text-danger' : 'text-success'">
+      {{(user.account?.balance) | number: '1.2-2'}} {{user.account?.currency}}
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+

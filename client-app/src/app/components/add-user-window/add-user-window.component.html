@@ -1,0 +1,79 @@
+<div class="form-container d-flex">
+  <h2 mat-dialog-title>Add user</h2>
+
+  <form class="form" [formGroup]="addUserForm" (ngSubmit)="save()">
+    <mat-checkbox class="active" formControlName="isActive">
+      Active
+    </mat-checkbox>
+    <div class="fields">
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput
+               placeholder="Agent_007"
+               formControlName="username"
+               required>
+        <mat-error *ngIf="addUserForm.controls.username.touched && addUserForm.controls.username.invalid">
+          <span *ngIf="addUserForm.controls.username.errors.required">This field is required for filling!</span>
+          <span *ngIf="isUsernameExist()">Username is already exist.</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput
+               placeholder="example@gmail.com"
+               formControlName="email"
+               required>
+        <mat-error *ngIf="addUserForm.controls.email.touched && addUserForm.controls.email.invalid">
+          <span *ngIf="addUserForm.controls.email.errors.required">This field is required for filling!</span>
+          <span *ngIf="addUserForm.controls.email.errors.pattern">This email is invalid.</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Choose a date</mat-label>
+        <input matInput
+               formControlName="birthday"
+               [min]="minDate"
+               [max]="maxDate"
+               [matDatepicker]="picker">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Select a title</mat-label>
+        <mat-select formControlName="title" disableRipple required>
+          <mat-option *ngFor="let title of titles" [value]="title">
+            {{title}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="addUserForm.controls.firstName.touched && addUserForm.controls.firstName.invalid">
+          <span *ngIf="addUserForm.controls.firstName.errors.required">This field is required for filling!</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>First name</mat-label>
+        <input matInput
+               placeholder="John"
+               formControlName="firstName"
+               required>
+        <mat-error *ngIf="addUserForm.controls.firstName.touched && addUserForm.controls.firstName.invalid">
+          <span *ngIf="addUserForm.controls.firstName.errors.required">This field is required for filling!</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Last name</mat-label>
+        <input matInput
+               placeholder="Smith"
+               formControlName="lastName"
+               required>
+        <mat-error *ngIf="addUserForm.controls.lastName.touched && addUserForm.controls.lastName.invalid">
+          <span *ngIf="addUserForm.controls.lastName.errors.required">This field is required for filling!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="buttons-group">
+      <button class="mat-raised-button" (click)="close()">Close</button>
+      <button class="mat-raised-button mat-primary">Save</button>
+    </div>
+  </form>
+</div>
+
