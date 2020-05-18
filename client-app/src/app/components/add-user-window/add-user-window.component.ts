@@ -19,7 +19,6 @@ export class AddUserWindowComponent implements OnInit{
   public emailRegExp = /^(([^<>+()\[\]\\.,;:\s@"-#$%&=]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
   public minDate: Date = new Date(1920, 0, 1);
   public maxDate: Date = new Date(Date.now());
-  private newUser: UserModel;
 
   constructor(
       private fb: FormBuilder,
@@ -34,6 +33,18 @@ export class AddUserWindowComponent implements OnInit{
   get username() {
     return this.addUserForm.get('username');
   }
+  get email() {
+    return this.addUserForm.get('email');
+  }
+  get title() {
+    return this.addUserForm.get('title');
+  }
+  get firstName() {
+    return this.addUserForm.get('firstName');
+  }
+  get lastName() {
+    return this.addUserForm.get('lastName');
+  }
 
   createForm() {
     this.addUserForm = this.fb.group({
@@ -41,7 +52,7 @@ export class AddUserWindowComponent implements OnInit{
       birthday: [null],
       title: [null, [Validators.required]],
       username: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(20)], [usernameUniquenessValidator(this.userService)]],
-      email: [null, [Validators.required, Validators.email, Validators.pattern(this.emailRegExp)]],
+      email: [null, [Validators.required, Validators.pattern(this.emailRegExp)]],
       firstName: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
       lastName: [null, [Validators.required, Validators.minLength(2), Validators.maxLength(20)]]
     })
@@ -55,19 +66,18 @@ export class AddUserWindowComponent implements OnInit{
     if (!this.addUserForm.valid) {
       return;
     }
-    const date = this.addUserForm.value.birthday;
-    this.newUser = Object.assign({}, this.addUserForm.value, { id: 0, birthday: date ? date.toISOString().split('.')[0] : new Date().toISOString() });
-    this.userService.createNewUser(this.newUser)
-      .pipe(switchMap(() =>
-        from([this.userService.getUsers(), this.userService.getUsersBalance()])
-          .pipe(map(value => value),combineAll())))
-      .subscribe((users: [UserModel[], AccountModel[]]) => {
-        this.userService.getUsersEmitter().emit(users)
-      });
-    this.close();
+    const user = this.addUserForm.getRawValue();
+    user.id = 0;
+    user.date = user.birthday ? user.birthday.toISOString().split('.')[0] : new Date().toISOString();
+    this.userService.createNewUser(user)
+      .subscribe(() => {
+        this.close(true)
+      }, (error) => {
+        console.warn(error);
+      })
   }
 
-  close() {
+  close(update: boolean = false) {
     this.dialogRef.close();
   }
 }

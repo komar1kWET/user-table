@@ -4,6 +4,7 @@ import {HttpClient} from "@angular/common/http";
 import {UserModel} from "@fd2/models/user.model";
 import {map} from "rxjs/operators";
 import {AccountModel} from "@fd2/models/account.model";
+import {SortObjectModel} from "@fd2/models/sort-object.model";
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,18 @@ export class UserService {
   createNewUser(user: UserModel): Observable<UserModel> {
     return this.http.post<UserModel>('https://localhost:5001/api/users', user);
   }
-  getUsersEmitter(): EventEmitter<[UserModel[], AccountModel[]]> {
-    return this.usersEmitter;
+
+  sort(sortObject: SortObjectModel): void {
+    // if ((sortObject.prop === sortObject.firstProperty && sortObject.firstCondition) || (sortObject.prop === sortObject.secondProperty && sortObject.secondCondition)) {
+    //   sortObject.data.sort((a, b) => {
+    //     return a[sortObject.prop] > b[sortObject.prop] ? 1 : (b[sortObject.prop] > a[sortObject.prop]) ? -1 : 0
+    //   })
+    //   sortObject.prop === sortObject.firstProperty ? sortObject.firstCondition = false : sortObject.secondCondition = false;
+    // } else {
+    //   sortObject.data.sort((a, b) => {
+    //     return a[sortObject.prop] < b[sortObject.prop] ? 1 : (b[sortObject.prop] < a[sortObject.prop]) ? -1 : 0
+    //   });
+    //   sortObject.prop === sortObject.firstProperty ? sortObject.firstCondition = true : sortObject.secondCondition = true;
+    // }
   }
 }

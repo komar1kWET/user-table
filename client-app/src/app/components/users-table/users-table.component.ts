@@ -4,7 +4,11 @@ import {UserService} from "@fd2/services/user.service";
 import {AccountModel} from "@fd2/models/account.model";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserWindowComponent} from "@fd2/components/add-user-window/add-user-window.component";
+import {forkJoin} from "rxjs";
 
+const DEFAULT_UP_DIRECTION = true;
+const IS_ACTIVE = 'isActive';
+const USERNAME = 'username';
 @Component({
   selector: 'fd2-users-table',
   templateUrl: './users-table.component.html',
@@ -12,10 +16,10 @@ import {AddUserWindowComponent} from "@fd2/components/add-user-window/add-user-w
 })
 export class UsersTableComponent implements OnInit {
   public usersList: UserModel[];
-  public sortActiveUp: boolean = true;
-  public sortUsernameUp: boolean = true;
-  public isActiveProperty: string = 'isActive';
-  public usernameProperty: string = 'username';
+  public sortingField: string = IS_ACTIVE;
+  public isUpDirection: boolean = DEFAULT_UP_DIRECTION;
+  public isActiveProperty: string = IS_ACTIVE;
+  public usernameProperty: string = USERNAME;
 
   constructor(
     private userService: UserService,
@@ -23,17 +27,7 @@ export class UsersTableComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userService.getUsers().subscribe((users: UserModel[]) => {
-      this.usersList = users;
-    });
-    this.userService.getUsersBalance().subscribe((accounts: AccountModel[]) => {
-      this.applyBalanceToAccordingUser(this.usersList, accounts);
-    });
-    this.userService.getUsersEmitter()
-      .subscribe((usersData: [UserModel[], AccountModel[]]) => {
-        this.usersList = usersData[0];
-        this.applyBalanceToAccordingUser(this.usersList, usersData[1]);
-      })
+    this.loadUsers();
   }
 
   applyBalanceToAccordingUser(userList: UserModel[], accounts: AccountModel[]): void {
@@ -42,23 +36,39 @@ export class UsersTableComponent implements OnInit {
     });
   }
 
+  loadUsers() {
+    forkJoin([this.userService.getUsers(), this.userService.getUsersBalance()])
+      .subscribe((userInfo: [UserModel[], AccountModel[]]) => {
+        this.usersList = userInfo[0];
+        this.applyBalanceToAccordingUser(this.usersList, userInfo[1]);
+      });
+  }
+
   openDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.autoFocus = true;
-    this.dialog.open(AddUserWindowComponent, dialogConfig);
+    this.dialog.open(AddUserWindowComponent, dialogConfig).afterClosed().subscribe(() => {
+      this.loadUsers();
+    });
   }
 
-  sort(prop: string) {
-    if ((prop === this.isActiveProperty && this.sortActiveUp) || (prop === this.usernameProperty && this.sortUsernameUp)) {
-      this.usersList.sort((a: UserModel, b: UserModel) => {
-        return a[prop] > b[prop] ? 1 : (b[prop] > a[prop]) ? -1 : 0
-      })
-      prop === this.isActiveProperty ? this.sortActiveUp = false : this.sortUsernameUp = false;
+  sortByProperty(field: string): void {
+    if (field === this.sortingField) {
+      this.isUpDirection = !this.isUpDirection;
     } else {
-      this.usersList.sort((a: UserModel, b: UserModel) => {
-        return a[prop] < b[prop] ? 1 : (b[prop] < a[prop]) ? -1 : 0
-      });
-      prop === this.isActiveProperty ? this.sortActiveUp = true : this.sortUsernameUp = true;
+      this.isUpDirection = DEFAULT_UP_DIRECTION;
     }
+    this.sortingField = field;
+    this.usersList.sort((a: UserModel, b: UserModel) => {
+     return this.isUpDirection ? UsersTableComponent.compare(a[this.sortingField], b[this.sortingField]) : UsersTableComponent.compare(b[this.sortingField], a[this.sortingField]);
+    });
+  }
+
+  private static compare(a, b) {
+    return a < b ? 1 : (b < a) ? -1 : 0;
+  }
+
+  trackByUserId(index: number, user: UserModel): number{
+    return user.id;
   }
 }

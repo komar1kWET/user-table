@@ -11,21 +11,23 @@
     <th scope="col">#</th>
     <th scope="col">
       Active
-      <i class="fas fa-sort-amount-up"
-        *ngIf="sortActiveUp"
-        (click)="sort(isActiveProperty)"></i>
-      <i class="fas fa-sort-amount-down"
-        *ngIf="!sortActiveUp"
-        (click)="sort(isActiveProperty)"></i>
+      <i class="fas"
+        [ngClass]="{
+          'active': sortingField === isActiveProperty,
+          'fa-sort-amount-up': (sortingField === isActiveProperty && isUpDirection) || sortingField !== isActiveProperty,
+          'fa-sort-amount-down': sortingField === isActiveProperty && !isUpDirection
+         }"
+        (click)="sortByProperty(isActiveProperty)"></i>
     </th>
     <th scope="col">
       Username
-      <i class="fas fa-sort-alpha-up"
-         *ngIf="sortUsernameUp"
-         (click)="sort(usernameProperty)"></i>
-      <i class="fas fa-sort-alpha-down"
-         *ngIf="!sortUsernameUp"
-         (click)="sort(usernameProperty)"></i>
+      <i class="fas"
+         [ngClass]="{
+          'active': sortingField === usernameProperty,
+          'fa-sort-alpha-up': (sortingField === usernameProperty && isUpDirection) || sortingField !== usernameProperty,
+          'fa-sort-alpha-down': sortingField === usernameProperty && !isUpDirection
+         }"
+         (click)="sortByProperty(usernameProperty)"></i>
     </th>
     <th scope="col">Email</th>
     <th scope="col">Name</th>
@@ -34,8 +36,8 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let user of usersList">
-    <th scope="row">{{usersList.indexOf(user) + 1}}</th>
+  <tr *ngFor="let user of usersList; index as i; trackBy:trackByUserId">
+    <th scope="row">{{i + 1}}</th>
     <td><i class="fas fa-check" *ngIf="user.isActive"></i></td>
     <td class="username">{{user.username}}</td>
     <td>{{user.email}}</td>
